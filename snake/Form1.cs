@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,7 +17,8 @@ namespace snake
         {
             Free,
             Snake,
-            Bonus
+            Bonus, 
+            Bomb
         }; 
 
         enum Directions
@@ -57,8 +58,8 @@ namespace snake
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            picBoard.Image = new Bitmap(420, 420);
-            g = Graphics.FromImage(picBoard.Image);
+            picGameBoard.Image = new Bitmap(420, 420);
+            g = Graphics.FromImage(picGameBoard.Image);
             g.Clear(Color.White);
 
             for (int i = 1; i <= 10; i++)
@@ -98,7 +99,6 @@ namespace snake
             {
                 Bonus();
             }
-
         }
         private void Bonus()
         {
@@ -116,7 +116,22 @@ namespace snake
             g.DrawImage(imgList.Images[0], x * 35, y * 35); 
         }
 
-        private void frmSnake_KeyDown(object sender, KeyEventArgs e)
+        private void Bomb()
+        {
+            int x, y;
+
+            do
+            {
+                x = rand.Next(1, 10);
+                y = rand.Next(1, 10);
+
+            }
+            while (GameBoardField[x, y] != GameBoardFields.Free);
+
+            GameBoardField[x, y] = GameBoardFields.Bomb;
+            g.DrawImage(imgList.Images[4], x * 35, y * 35);
+        }
+            private void frmSnake_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode)
             {
@@ -156,7 +171,7 @@ namespace snake
 
             g.DrawImage(imgList.Images[1], snakeXY[0].x * 35, snakeXY[0].y * 35);
 
-            //change direction of the head
+            // Verander de richting van het hoofd. 
             switch (direction)
             {
                 case Directions.Up:
@@ -177,7 +192,7 @@ namespace snake
              if (snakeXY[0].x < 1 || snakeXY[0].x > 10 || snakeXY[0].y < 1 || snakeXY[0].y >10)
             {
                 GameOver();
-                picBoard.Refresh();
+                picGameBoard.Refresh();
                 return; 
             }
 
@@ -185,8 +200,16 @@ namespace snake
             if (GameBoardField[snakeXY[0].x, snakeXY[0].y] == GameBoardFields.Snake)
             {
                 GameOver();
-                picBoard.Refresh();
+                picGameBoard.Refresh();
                 return; 
+            }
+
+            // Check of de slang een bomb  raakt. 
+            if (GameBoardField[snakeXY[0].x, snakeXY[0].y] == GameBoardFields.Bomb)
+            {
+                GameOver();
+                picGameBoard.Refresh();
+                return;
             }
 
             // Check of de slang een bonus opeet. 
@@ -200,15 +223,17 @@ namespace snake
 
                 if (snakeLength < 96)
                     Bonus();
-
-                this.Text = "Snake - score: " + snakeLength; 
+                if (12 < snakeLength || snakeLength < 96)
+                    Bomb(); 
+                this.Text = "Snake - score: " + (snakeLength -3);
+               
 
             }
 
             // Teken het hoofd van de slang. 
             g.DrawImage(imgList.Images[2], snakeXY[0].x * 35, snakeXY[0].y * 35);
             GameBoardField[snakeXY[0].x, snakeXY[0].y] = GameBoardFields.Snake;
-            picBoard.Refresh(); 
+            picGameBoard.Refresh(); 
         }
     }
 }
