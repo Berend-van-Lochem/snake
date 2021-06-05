@@ -212,7 +212,7 @@ namespace snake
                 return; 
             }
 
-            // Check of het hoofd van de slang overlapt met een deel van de slang. Als dat zo is, game over. 
+            // Check of het hoofd van de slang overlapt met een deel van de bomb. Als dat zo is, game over. 
             if (GameBoardField[snakeXY[0].x, snakeXY[0].y] == GameBoardFields.Bomb)
             {
                 GameOver();
@@ -226,7 +226,7 @@ namespace snake
             // Als de slang lang genoeg is, spawn een bomb. Als laatste de titel van het form zetten naar de score, de length min het begin 3 segmenten.
             if (GameBoardField[snakeXY[0].x, snakeXY[0].y] == GameBoardFields.Bonus)
             {
-                g.DrawImage(imgList.Images[1], snakeXY[snakeLength].x * 35,
+                g.DrawImage(imgList.Images[1], snakeXY[snakeLength].x * 35, 
                     snakeXY[snakeLength].y * 35);
                 GameBoardField[snakeXY[snakeLength].x, snakeXY[snakeLength].y] = GameBoardFields.Snake;
 
@@ -234,11 +234,10 @@ namespace snake
 
                 if (snakeLength < 96)
                     Bonus();
-                if (12 < snakeLength || snakeLength < 96)
+                if (12 < snakeLength && snakeLength < 96)
                     Bomb(); 
+                // Mischien maar een(1) bomb, maar steeds meer maakt het interresant. 
                 this.Text = "Snake - score: " + (snakeLength -3);
-               
-
             }
 
             // Als laatste tekent het een hoofd van de slang en zet het het vakje naar Snake.  
@@ -246,6 +245,6 @@ namespace snake
             GameBoardField[snakeXY[0].x, snakeXY[0].y] = GameBoardFields.Snake;
             // Het wordt gerefreshed en de veranderingen in de visuals worden zichtbaar. 
             picGameBoard.Refresh(); 
-        }
+        } 
     }
 }
